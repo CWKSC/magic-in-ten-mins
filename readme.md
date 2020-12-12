@@ -46,7 +46,7 @@
 [Markdown](doc/STLC.md) |
 [HTML](https://goldimax.github.io/magic-in-ten-mins/html/STLC.html)
 
-中等 | 系统 F(System F)[Java 基础，ADT，简单类型 λ 演算] |
+> 中等 | 系统 F(System F)[Java 基础，ADT，简单类型 λ 演算] |
 [Markdown](doc/SystemF.md) |
 [HTML](https://goldimax.github.io/magic-in-ten-mins/html/SystemF.html)
 

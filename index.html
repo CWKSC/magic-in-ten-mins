@@ -10,10 +10,11 @@ body { font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,
 h1 { font-size: 2.5em; color: #EF96AB; }
 h2 { margin-top: 2em; }
 blockquote { color: gray; margin: 0; padding: 1 1 1 20; border-left: 5px solid #EF96AB; }
-code { font-family: Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace; background: #F2F0F0; }
-pre { overflow: scroll; padding: 10px; background: #F1F0F0; }
-::-webkit-scrollbar, .element::-webkit-scrollbar, .element { display: none; }
+code, pre { font-family: Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace; background: #F2F0F0; }
+pre { overflow-x: auto; padding: 10px; }
 a { color: #02AEF1; text-decoration: none; }
+@media (prefers-color-scheme: dark) { body { color: #D8D8D6; background: #0E0E10; } }
+@media (prefers-color-scheme: dark) { pre, code { color: #D8D8D6; background: #0E0F1A; } }
 .hljs-keyword { color: #F288AF; }
 .hljs-comment { color: #929CA6; }
 .hljs-string { color: #0594A6; }
@@ -22,9 +23,12 @@ a { color: #02AEF1; text-decoration: none; }
 </head>
 <body>
 <h1 id="十分钟魔法练习">十分钟魔法练习</h1>
-<p><a href="https://github.com/PhotonQuantum/magic-in-ten-mins-rs">Rust版-光量子</a></p>
+<p><a href="https://github.com/PhotonQuantum/magic-in-ten-mins-rs">Rust版-光量子</a> |
+<a href="https://github.com/tusikalanse/magic-in-ten-mins-cpp">C++版-图斯卡蓝瑟</a></p>
 <p>抽象与组合</p>
 <p>希望能在十分钟内教会你一样魔法</p>
+<p>QQ群：1070975853 | 
+<a href="https://t.me/joinchat/Gla40h2ZvlSrqImOMaMUEA">Telegram Group</a></p>
 <blockquote>
 <p>目录中方括号里的是前置技能。</p>
 </blockquote>
@@ -56,6 +60,9 @@ a { color: #02AEF1; text-decoration: none; }
 <p>中等 | 系统 F(System F)[Java 基础，ADT，简单类型 λ 演算] |
 <a href="doc/SystemF.md">Markdown</a> |
 <a href="https://goldimax.github.io/magic-in-ten-mins/html/SystemF.html">HTML</a></p>
+<p>中等 | 系统 F ω(System F ω)[Java 基础，ADT，系统 F] |
+<a href="doc/SysFO.md">Markdown</a> | 
+<a href="https://goldimax.github.io/magic-in-ten-mins/html/SysFO.html">HTML</a></p>
 <h2 id="计算理论">计算理论</h2>
 <p>较难 | λ 演算(Lambda Calculus)[Java基础，ADT] |
 <a href="doc/Lambda.md">Markdown</a> |
@@ -66,6 +73,9 @@ a { color: #02AEF1; text-decoration: none; }
 <p>较难 | 编码(Encode)[λ演算] |
 <a href="doc/Encode.md">Markdown</a> |
 <a href="https://goldimax.github.io/magic-in-ten-mins/html/Encode.html">HTML</a></p>
+<p>中等 | Y 组合子(Y Combinator)[Java 基础，λ 演算，λ 演算编码] |
+<a href="doc/YCombinator.md">Markdown</a> |
+<a href="https://goldimax.github.io/magic-in-ten-mins/html/YCombinator.html">HTML</a></p>
 <h2 id="编程范式">编程范式</h2>
 <p>简单 | 表驱动编程(Table-Driven Programming)[简单Java基础] |
 <a href="doc/TableDriven.md">Markdown</a> |

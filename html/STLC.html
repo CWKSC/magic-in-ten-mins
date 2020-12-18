@@ -10,10 +10,11 @@ body { font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,
 h1 { font-size: 2.5em; color: #EF96AB; }
 h2 { margin-top: 2em; }
 blockquote { color: gray; margin: 0; padding: 1 1 1 20; border-left: 5px solid #EF96AB; }
-code { font-family: Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace; background: #F2F0F0; }
-pre { overflow: scroll; padding: 10px; background: #F1F0F0; }
-::-webkit-scrollbar, .element::-webkit-scrollbar, .element { display: none; }
+code, pre { font-family: Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace; background: #F2F0F0; }
+pre { overflow-x: auto; padding: 10px; }
 a { color: #02AEF1; text-decoration: none; }
+@media (prefers-color-scheme: dark) { body { color: #D8D8D6; background: #0E0E10; } }
+@media (prefers-color-scheme: dark) { pre, code { color: #D8D8D6; background: #0E0F1A; } }
 .hljs-keyword { color: #F288AF; }
 .hljs-comment { color: #929CA6; }
 .hljs-string { color: #0594A6; }
@@ -35,13 +36,15 @@ FunctionType = Type * Type</code></pre>
 <p>用 Java 代码可以表示为：</p>
 <pre><code class="language-java"><span class="hljs-comment">// 构造函数， equals 已省去</span>
 <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Type</span> </span>{}
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BaseT</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Type</span> </span>{
+<span class="hljs-comment">// BaseType</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TVal</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Type</span> </span>{
     String name;
     <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>{
         <span class="hljs-keyword">return</span> name;
     }
 }
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FunT</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Type</span> </span>{
+<span class="hljs-comment">// FunctionType</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TArr</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Type</span> </span>{
     Type src, tar;
     <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">toString</span><span class="hljs-params">()</span> </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;(&quot;</span> + src + <span class="hljs-string">&quot; → &quot;</span> + tar + <span class="hljs-string">&quot;)&quot;</span>;
@@ -89,7 +92,7 @@ FunctionType = Type * Type</code></pre>
     <span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">checkType</span><span class="hljs-params">()</span> 
             <span class="hljs-keyword">throws</span> BadTypeException </span>{
         <span class="hljs-keyword">if</span> (e.checkApply(x))
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> FunT(x.type, 
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TArr(x.type, 
                             e.checkType());
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> BadTypeException();
     }
@@ -105,10 +108,10 @@ FunctionType = Type * Type</code></pre>
             <span class="hljs-keyword">throws</span> BadTypeException </span>{
         Type tf = f.checkType();
 
-        <span class="hljs-keyword">if</span> (tf <span class="hljs-keyword">instanceof</span> FunT &amp;&amp;
-                ((FunT) tf).src
+        <span class="hljs-keyword">if</span> (tf <span class="hljs-keyword">instanceof</span> TArr &amp;&amp;
+                ((TArr) tf).src
                 .equals(x.checkType()))
-            <span class="hljs-keyword">return</span> ((FunT) tf).tar;
+            <span class="hljs-keyword">return</span> ((TArr) tf).tar;
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> BadTypeException();
     }
 
@@ -120,21 +123,18 @@ FunctionType = Type * Type</code></pre>
 <p>下面的测试代码对</p>
 <pre><code>(λ (x: <span class="hljs-keyword">int</span>). (y: bool → <span class="hljs-keyword">int</span>)) (<span class="hljs-number">1</span>: <span class="hljs-keyword">int</span>)</code></pre>
 <p>进行了类型检查，会打印输出 <code>(bool → int)</code> ：</p>
-<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">STLambda</span> </span>{
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>{
-        <span class="hljs-keyword">try</span> {
-            System.out.println(<span class="hljs-keyword">new</span> App(
-                <span class="hljs-keyword">new</span> Fun(
-                    <span class="hljs-keyword">new</span> Val(<span class="hljs-string">&quot;x&quot;</span>, 
-                        <span class="hljs-keyword">new</span> BaseT(<span class="hljs-string">&quot;int&quot;</span>)),
-                    <span class="hljs-keyword">new</span> Val(<span class="hljs-string">&quot;y&quot;</span>, <span class="hljs-keyword">new</span> FunT(
-                        <span class="hljs-keyword">new</span> BaseT(<span class="hljs-string">&quot;bool&quot;</span>),
-                        <span class="hljs-keyword">new</span> BaseT(<span class="hljs-string">&quot;int&quot;</span>)))),
-                <span class="hljs-keyword">new</span> Val(<span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-keyword">new</span> BaseT(<span class="hljs-string">&quot;int&quot;</span>))
-            ).checkType());
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            e.printStackTrace();
-        }
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">STLambda</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> 
+    <span class="hljs-keyword">throws</span> BadTypeException </span>{
+        System.out.println(<span class="hljs-keyword">new</span> App(
+            <span class="hljs-keyword">new</span> Fun(
+                <span class="hljs-keyword">new</span> Val(<span class="hljs-string">&quot;x&quot;</span>, 
+                    <span class="hljs-keyword">new</span> TVal(<span class="hljs-string">&quot;int&quot;</span>)),
+                <span class="hljs-keyword">new</span> Val(<span class="hljs-string">&quot;y&quot;</span>, <span class="hljs-keyword">new</span> TArr(
+                    <span class="hljs-keyword">new</span> TVal(<span class="hljs-string">&quot;bool&quot;</span>),
+                    <span class="hljs-keyword">new</span> TVal(<span class="hljs-string">&quot;int&quot;</span>)))),
+            <span class="hljs-keyword">new</span> Val(<span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-keyword">new</span> TVal(<span class="hljs-string">&quot;int&quot;</span>))
+        ).checkType());
     }
 }</code></pre>
 <p>而如果对</p>

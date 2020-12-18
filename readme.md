@@ -14,13 +14,9 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 ## 类型系统
 
-偏易 | 代数数据类型(Algebraic Data Type)[Java基础] |
-[Markdown](doc/ADT.md) |
-[HTML](https://goldimax.github.io/magic-in-ten-mins/html/ADT.html)
+[偏易 | 代数数据类型(Algebraic Data Type)[Java基础]](doc/ADT.md)
 
-> 偏易 | 广义代数数据类型(Generalized Algebriac Data Type)[Java基础，ADT] |
-> [Markdown](doc/GADT.md) |
-> [HTML](https://goldimax.github.io/magic-in-ten-mins/html/GADT.html)
+[偏易 | 广义代数数据类型(Generalized Algebriac Data Type)[Java基础，ADT]](doc/GADT.md)
 
 > 偏易 | 余代数数据类型(Coalgebraic Data Type)[Java基础，ADT] |
 > [Markdown](doc/CoData.md) |

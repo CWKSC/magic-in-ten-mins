@@ -1,6 +1,6 @@
 # 十分钟魔法练习
 
-改写自 [十分钟魔法练习-玩火](https://github.com/goldimax/magic-in-ten-mins)
+改写自 [十分钟魔法练习-玩火](https://github.com/goldimax/magic-in-ten-mins) 的 C# 版本
 
 [Rust版-光量子](https://github.com/PhotonQuantum/magic-in-ten-mins-rs) | [C++版-图斯卡蓝瑟](https://github.com/tusikalanse/magic-in-ten-mins-cpp)
 
@@ -14,13 +14,11 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 ## 类型系统
 
-[偏易 | 代数数据类型(Algebraic Data Type)[Java基础]](doc/ADT.md)
+[偏易 | 代数数据类型(Algebraic Data Type)[C# 基础]](doc/ADT.md)
 
-[偏易 | 广义代数数据类型(Generalized Algebriac Data Type)[Java基础，ADT]](doc/GADT.md)
+[偏易 | 广义代数数据类型(Generalized Algebriac Data Type)[C# 基础，ADT]](doc/GADT.md)
 
-> 偏易 | 余代数数据类型(Coalgebraic Data Type)[Java基础，ADT] |
-> [Markdown](doc/CoData.md) |
-> [HTML](https://goldimax.github.io/magic-in-ten-mins/html/CoData.html)
+[偏易 | 余代数数据类型(Coalgebraic Data Type)[C# 基础，ADT]](doc/CoData.md)
 
 > 偏易 | 单位半群(Monoid)[Java基础] |
 > [Markdown](doc/Monoid.md) |

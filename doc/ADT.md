@@ -1,6 +1,6 @@
 # 十分钟魔法练习：代数数据类型
 
-### By 「玩火」 ，改写「CWKSC」
+### By 「玩火」，改写「CWKSC」
 
 > 前置技能：C# 基础
 
@@ -37,7 +37,7 @@ public sealed class Teacher : ISchoolPerson
 }
 ```
 
-`SchoolPerson` 可能是 `Student` 也可能是 `Teacher` ，可以表示为 `Student` 和 `Teacher` 的「和」，即 `String * int + String * String` 。而使用时只需要用 `is` 就能知道当前的 `StudentPerson` 具体是 `Student` 还是 `Teacher` 
+`SchoolPerson` 可能是 `Student` 也可能是 `Teacher` ，可以表示为 `Student` 和 `Teacher` 的「和」，即 `String * int + String * String` 。而使用时只需要用 C# 中的 `is` 就能知道当前的 `StudentPerson` 具体是 `Student` 还是 `Teacher` 
 
 ```csharp
 ISchoolPerson student = new Student();

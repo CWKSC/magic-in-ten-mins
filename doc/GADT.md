@@ -1,6 +1,6 @@
 # 十分钟魔法练习：广义代数数据类型
 
-### By 「玩火」 ，改写「CWKSC」
+### By 「玩火」，改写「CWKSC」
 
 > 前置技能：C# 基础，ADT
 
@@ -74,12 +74,12 @@ Expr OnePlusTwo = new Add(new IntVal(1), new IntVal(2));
 Expr TrueEqFalse = new Eq(new BoolVal(true), new BoolVal(false));
 
 // 1 + true
-CS1503 引数 2: 无法从 'GADT.BoolVal' 转换成 'GADT.Expr<int>'
+// CS1503 引数 2: 无法从 'GADT.BoolVal' 转换成 'GADT.Expr<int>'
 Expr OnePlusTrue = new Add(new IntVal(1), new BoolVal(true));
                                           ^^^^^^^^^^^^^^^^^
 
 // true == 42
-CS1503 引数 2: 无法从 'GADT.IntVal' 转换成 'GADT.Expr<bool>'
+// CS1503 引数 2: 无法从 'GADT.IntVal' 转换成 'GADT.Expr<bool>'
 Expr TrueEq42 = new Eq(new BoolVal(true), new IntVal(42));
                                           ^^^^^^^^^^^^^^
 ```

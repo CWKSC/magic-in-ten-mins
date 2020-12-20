@@ -94,6 +94,11 @@ Console.WriteLine(threeLengthRing().next().next().value); // 3
 Console.WriteLine(threeLengthRing().next().next().next().value); // 1
 Console.WriteLine(threeLengthRing().next().next().next().next().value); // 2
 Console.WriteLine(threeLengthRing().next().next().next().next().next().value); // 3
+
+    1 --> 2 --> 3 
+    ^           |
+    |           |
+    +-----------+
 ```
 
 有向树/图：

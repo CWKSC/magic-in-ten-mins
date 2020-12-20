@@ -74,3 +74,23 @@ Console.WriteLine(InfAlt().next().next().next().next().head); // 1
 用这样的思路可以构造出无限大的树、带环的图等数据结构。
 
 不过以上都是对余代数数据类型的一种模拟，实际上在对其支持良好的语言都会自动加上 `Func` 来辅助构造，同时还能处理好对无限大（其实是环）的数据结构的无限递归变换（`map`, `fold` ...）的操作。
+
+### 环形结构的其他实现：
+
+在 C# 中，可以定义递归的函数类型：
+
+```csharp
+public delegate (T value, InfRing<T> next) InfRing<T>();
+public static (int value, InfRing<int> next) threeLengthRing() =>
+    (1, () => (2, () => (3, threeLengthRing)));
+```
+
+```csharp
+Console.WriteLine(threeLengthRing().value); // 1
+Console.WriteLine(threeLengthRing().next().value); // 2
+Console.WriteLine(threeLengthRing().next().next().value); // 3
+Console.WriteLine(threeLengthRing().next().next().next().value); // 1
+Console.WriteLine(threeLengthRing().next().next().next().next().value); // 2
+Console.WriteLine(threeLengthRing().next().next().next().next().next().value); // 3
+```
+

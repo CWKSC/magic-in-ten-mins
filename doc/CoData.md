@@ -75,9 +75,11 @@ Console.WriteLine(InfAlt().next().next().next().next().head); // 1
 
 不过以上都是对余代数数据类型的一种模拟，实际上在对其支持良好的语言都会自动加上 `Func` 来辅助构造，同时还能处理好对无限大（其实是环）的数据结构的无限递归变换（`map`, `fold` ...）的操作。
 
-### 环形结构的其他实现：
+## 无限数据结构的其他实现：
 
-在 C# 中，可以定义递归的函数类型：
+在 C# 中，可以定义递归的函数类型
+
+对于环形结构，可以这样定义：
 
 ```csharp
 public delegate (T value, InfRing<T> next) InfRing<T>();
@@ -94,3 +96,39 @@ Console.WriteLine(threeLengthRing().next().next().next().next().value); // 2
 Console.WriteLine(threeLengthRing().next().next().next().next().next().value); // 3
 ```
 
+有向树/图：
+
+```csharp
+public delegate (T value, List<InfTree<T>> nexts) InfTree<T>();
+public static (int value, List<InfTree<int>> nexts) tree(int x) => 
+    (x, new List<InfTree<int>>{
+        () => tree(x += 1),
+        () => tree(x += 2) });
+```
+
+```csharp
+Console.WriteLine(tree(1).value); // 1
+Console.WriteLine(tree(1).nexts[0]().value); // 2
+Console.WriteLine(tree(1).nexts[1]().value); // 3
+Console.WriteLine(tree(1).nexts[0]().nexts[0]().value); // 3
+Console.WriteLine(tree(1).nexts[0]().nexts[1]().value); // 4
+Console.WriteLine(tree(1).nexts[1]().nexts[0]().value); // 4
+Console.WriteLine(tree(1).nexts[1]().nexts[1]().value); // 5
+
+              1
+            /   \
+          /       \
+        2           3
+      /   \       /   \
+    3       4   4       5
+  /  \    /  \ /  \    /  \
+...  ... ... ...  ... ... ...
+
+              x
+            /   \
+          /       \
+       x + 1     x + 2
+       /   \     /   \
+     /       \ /       \
+   ...      ......      ...
+```

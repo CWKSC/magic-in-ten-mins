@@ -2,7 +2,7 @@
 
 ### By 「玩火」，改写「CWKSC」
 
-> 前置技能：C# 基础
+> 前置技能：C#（IEnumerable, Aggregate()）
 
 ## Semigroup 半群
 
@@ -18,13 +18,12 @@
 
 用 Java 代码可以表示为：
 
-```java
-interface Monoid<T> {
-    T empty();
-    T append(T a, T b);
-    default T appends(Stream<T> x) {
-        return x.reduce(empty(), this::append);
-    }
+```csharp
+public interface Monoid<T>
+{
+    public T Empty();
+    public T Append(T a, T b);
+    public T Appends(IEnumerable<T> x) => x.Aggregate(Empty(), Append);
 }
 ```
 

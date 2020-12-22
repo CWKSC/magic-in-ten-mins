@@ -61,7 +61,7 @@ public class Student : IComparable<Student>
 }
 ```
 
-如果我们想对其实现 `IComparable<Student>` 接口，正常情况下：
+如果想对其实现 `IComparable<Student>` 接口，正常情况下：
 
 ```csharp
 public int CompareTo(Student s) =>

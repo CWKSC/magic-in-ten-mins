@@ -94,7 +94,7 @@ public int CompareTo(Student student) =>
 
 这样的写法比一连串 `if-else` 或者 `?:` 优雅太多。
 
-## C# 中 Monoid 另一种实现：
+## C# 中 Monoid 的另一种实现：
 
 个人感觉对于 Monoid 的定义和用法上有点复杂和麻烦，这里提供另一种实现：
 

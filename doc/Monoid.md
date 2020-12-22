@@ -16,7 +16,7 @@
 
 举个例子， `{+, 自然数集}` 的单位元就是 0 ， `{*, 自然数集}` 的单位元就是 1 ， `{+, 字符串集}` 的单位元就是空串 `""` 。
 
-用 C# 代码可以表示为：
+C# 中可表示为：
 
 ```csharp
 public abstract class Monoid<T>
@@ -27,11 +27,11 @@ public abstract class Monoid<T>
 }
 ```
 
-不使用 interface 是因为 C# 中继承者不能使用默认方法。
+不使用 interface 是因为 C# 中继承者不能直接使用默认方法。
 
 ## 应用：Optional
 
-在 C# 中可以用 `T?` 或者 `Nullable` 可以用来表示可能有值的类型，我们可以对它定义个 Monoid ：
+在 C# 中可以用 `T?` 或者 `Nullable<T>` 可以用来表示可能有值的类型，我们可以对它定义个 Monoid ：
 
 ```csharp
 public class OptionalM<T> : Monoid<T?> where T : struct
@@ -49,7 +49,7 @@ new OptionalM<int>().Appends(new int?[] { null, 2, 3 })) // 2
 
 ## 应用：Ordering
 
-有一個 `Student` class
+存在一個 `Student` 类
 
 ```csharp
 public class Student : IComparable<Student>

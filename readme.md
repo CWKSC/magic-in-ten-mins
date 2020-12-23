@@ -1,5 +1,7 @@
 # 十分钟魔法练习
 
+Language: [zh-Hant](readme_zh-Hant.md)
+
 改写自 [十分钟魔法练习-玩火](https://github.com/goldimax/magic-in-ten-mins) ，C# 版本
 
 其他版本：[Rust版-光量子](https://github.com/PhotonQuantum/magic-in-ten-mins-rs) | [C++版-图斯卡蓝瑟](https://github.com/tusikalanse/magic-in-ten-mins-cpp)
@@ -20,9 +22,7 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 [偏易 | 余代数数据类型(Coalgebraic Data Type)[C# 基础，ADT]](doc/CoData.md)
 
-> 偏易 | 单位半群(Monoid)[Java基础] |
-> [Markdown](doc/Monoid.md) |
-> [HTML](https://goldimax.github.io/magic-in-ten-mins/html/Monoid.html)
+[偏易 | 单位半群(Monoid)[C# (IEnumerable, Aggregate(), Extension Methods, IComparable)]](doc/Monoid.md)
 
 > 较难 | 高阶类型(Higher Kinded Type)[Java基础] |
 > [Markdown](doc/HKT.md) |

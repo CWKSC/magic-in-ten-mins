@@ -1,43 +1,43 @@
-# 十分钟魔法练习：余代数数据类型
+# 十分鐘魔法練習：餘代數數據類型
 
-### By 「玩火」，改写「CWKSC」
+### By 「玩火」，改寫「CWKSC」
 
-> 前置技能：C# 基础，[ADT](ADT.md)
+> 前置技能：C# 基礎，[ADT](ADT_zh_Hant.md)
 
 ## ADT 的局限性
 
-很显然， ADT 可以构造任何树形的数据结构：树的节点内分支用和类型连接，层级间节点用积类型连接。
+很顯然， ADT 可以構造任何樹形的數據結構：樹的節點內分支用和類型連接，層級間節點用積類型連接。
 
-但是同样很显然 ADT 并不能搞出环形的数据结构或者说是无穷大小的数据结构。比如下面的代码：
+但是同樣很顯然 ADT 並不能搞出環形的數據結構或者說是無窮大小的數據結構。比如下面的代碼：
 
 ```csharp
 using IntList = ADT.List<int>;
-using IntNil  = ADT.Nil<int>;
+using IntNil = ADT.Nil<int>;
 using IntCons = ADT.Cons<int>;
 
 IntList list = new IntCons(4, new IntCons(2, new IntNil()));
 ADT.PrintList(list); // [4, 2, Nil]
 
-// CS0165 使用未指派的区域变数 'list'
+// CS0165 使用未指派的區域變數 'list'
 IntList list = new IntCons(1, list);
                               ^^^^
 ```
 
-编译器会表示 `list` 在使用时未初始化。
+編譯器會表示 `list` 在使用時未初始化。
 
-为什么会这样呢？ ADT 是归纳构造的，也就是说它必须从非递归的基本元素开始组合构造成更大的元素。
+為什麼會這樣呢？ ADT 是歸納構造的，也就是說它必須從非遞歸的基本元素開始組合構造成更大的元素。
 
-如果我们去掉这些基本元素那就没法凭空构造大的元素，也就是说如果去掉归纳的第一步那整个归纳过程毫无意义。
+如果我們去掉這些基本元素那就沒法憑空構造大的元素，也就是說如果去掉歸納的第一步那整個歸納過程毫無意義。
 
-## 余代数数据类型
+## 餘代數數據類型
 
-余代数数据类型（Coalgebraic Data Type）也就是余归纳数据类型（Coinductive Data Type），代表了自顶向下的数据类型构造思路，思考一个类型可以如何被分解从而构造数据类型。
+餘代數數據類型（Coalgebraic Data Type）也就是餘歸納數據類型（Coinductive Data Type），代表了自頂向下的數據類型構造思路，思考一個類型可以如何被分解從而構造數據類型。
 
-这样在分解过程中再次使用自己这个数据类型本身就是一件非常自然的事情了。
+這樣在分解過程中再次使用自己這個數據類型本身就是一件非常自然的事情了。
 
-不过在编程实现过程中使用自己需要加个惰性数据结构包裹，防止积极求值的语言无限递归生成数据。
+不過在編程實現過程中使用自己需要加個惰性數據結構包裹，防止積極求值的語言無限遞歸生成數據。
 
-比如一个列表可以被分解为第一项和剩余的列表：
+比如一個列表可以被分解為第一項和剩餘的列表：
 
 ```csharp
 public class InfIntList
@@ -52,13 +52,13 @@ public class InfIntList
 }
 ```
 
-这里的 `Func` 可以做到仅在需要 `next` 的时候才求值。使用的例子如下：
+這裡的 `Func` 可以做到僅在需要 `next` 的時候才求值。使用的例子如下：
 
 ```csharp
 public static InfIntList InfAlt()
 {
-    return new InfIntList(1, 
-        () => new InfIntList(2, 
+    return new InfIntList(1,
+        () => new InfIntList(2,
             InfAlt));
 }
 
@@ -69,17 +69,17 @@ Console.WriteLine(InfAlt().next().next().next().head); // 2
 Console.WriteLine(InfAlt().next().next().next().next().head); // 1
 ```
 
-这里的 `infAlt` 从某种角度来看实际上就是个长度为 2 的环形结构。
+這裡的 `infAlt` 從某種角度來看實際上就是個長度為 2 的環形結構。
 
-用这样的思路可以构造出无限大的树、带环的图等数据结构。
+用這樣的思路可以構造出無限大的樹、帶環的圖等數據結構。
 
-不过以上都是对余代数数据类型的一种模拟，实际上在对其支持良好的语言都会自动加上 `Func` 来辅助构造，同时还能处理好对无限大（其实是环）的数据结构的无限递归变换（`map`, `fold` ...）的操作。
+不過以上都是對余代數數據類型的一種模擬，實際上在對其支持良好的語言都會自動加上`Func` 來輔助構造，同時還能處理好對無限大（其實是環）的數據結構的無限遞歸變換（`map`, `fold` ...）的操作。
 
-## 无限数据结构的其他实现：
+## 無限數據結構的其他實現：
 
-在 C# 中，可以定义递归的函数类型
+在 C# 中，可以定義遞歸的函數類型
 
-对于环形结构，可以这样定义：
+對於環形結構，可以這樣定義：
 
 ```csharp
 public delegate (T value, InfRing<T> next) InfRing<T>();
@@ -101,11 +101,11 @@ Console.WriteLine(threeLengthRing().next().next().next().next().next().value); /
     +-----------+
 ```
 
-有向树/图：
+有向樹/圖：
 
 ```csharp
 public delegate (T value, List<InfTree<T>> nexts) InfTree<T>();
-public static (int value, List<InfTree<int>> nexts) tree(int x) => 
+public static (int value, List<InfTree<int>> nexts) tree(int x) =>
     (x, new List<InfTree<int>>{
         () => tree(x += 1),
         () => tree(x += 2) });

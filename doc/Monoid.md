@@ -10,41 +10,59 @@
 
 比如在自然数集上的加法或者乘法可以构成一个半群，再比如字符串集上字符串的连接构成一个半群。
 
+```csharp
+// 二元运算
+public interface BinaryOperation<T> { public Func<T, T, T> BinaryOperation { get; set; } }
+// 半群
+public interface Semigroup<T> : BinaryOperation<T> { }
+```
+
 ## Monoid 单位半群
 
 单位半群是一种带单位元的半群，对于集合 `A` 上的半群 `{<>, A}` ， `A` 中的元素 `a` 使 `A` 中的所有元素 `x` 满足 `x <> a` 和 `a <> x` 都等于 `x`，则 `a` 就是 `{<>, A}` 上的单位元。
 
 举个例子， `{+, 自然数集}` 的单位元就是 0 ， `{*, 自然数集}` 的单位元就是 1 ， `{+, 字符串集}` 的单位元就是空串 `""` 。
 
-C# 中可表示为：
-
 ```csharp
-public abstract class Monoid<T>
-{
-    public abstract T Empty();
-    public abstract T Append(T a, T b);
-    public T Appends(IEnumerable<T> x) => x.Aggregate(Empty(), Append);
+// 单位元
+public interface Unital<T> { public Func<T> Identity { set; get; } }
+// 单位半群
+public class Monoid<T> : Unital<T>, Semigroup<T> {
+    public Monoid(Func<T> Identity, Func<T, T, T> BinaryOperation)
+    {
+        this.Identity = Identity;
+        this.BinaryOperation = BinaryOperation;
+    }
+    public Func<T> Identity { get; set; }
+    public Func<T, T, T> BinaryOperation { get; set; }
 }
 ```
 
-不使用 interface 是因为 C# 中继承者不能直接使用默认方法。
+对于 `Monoid` 这种代数结构，可以折叠 `fold` / `reduce`：
+
+```csharp
+public static T Appends<T>(this Monoid<T> monoid, IEnumerable<T> x) => 
+    x.Aggregate(monoid.Identity(), monoid.BinaryOperation);
+// 下面这个是为了方便使用
+public static T Appends<T>(this Monoid<T> monoid, params T[] x) =>
+    monoid.Appends((IEnumerable<T>)x);
+```
+
+对于其他在 `Monoid` 上使用的运算，可以用 C# 中的 Extension Methods 添加。
 
 ## 应用：Optional
 
-在 C# 中可以用 `T?` 或者 `Nullable<T>` 可以用来表示可能有值的类型，我们可以对它定义个 Monoid ：
+在 C# 中可以用 `T?` 或者 `Nullable<T>` 可以用来表示可能有值的类型，我们可以对它定义个 `Monoid` ：
 
 ```csharp
-public class OptionalM<T> : Monoid<T?> where T : struct
-{
-    public override T? Empty() => null;
-    public override T? Append(T? a, T? b) => a ?? b;
-}
+public static Monoid<T?> OptionalM<T>() where T : struct => 
+    new Monoid<T?>(() => null, (a, b) => a ?? b);
 ```
 
 这样 `appends` 将获得一串 `T?` 中第一个不为空的值，对于需要进行一连串尝试操作可以这样写：
 
 ```csharp
-new OptionalM<int>().Appends(new int?[] { null, 2, 3 })) // 2
+OptionalM<int>().Appends(null, 2, 3) // 2
 ```
 
 ## 应用：Ordering
@@ -74,64 +92,23 @@ public int CompareTo(Student s) =>
 对于 `IComparable` ，可以构造出一個 Monoid：
 
 ```csharp
-public class OrderingM : Monoid<int> {
-    public override int Empty() => 0;
-    public override int Append(int a, int b) => a == 0 ? b : a;
-}
+public static Monoid<int> OrderingM() =>
+    new Monoid<int>(() => 0, (a, b) => a == 0 ? b : a);
 ```
 
 同样如果有一串带有优先级的比较操作就可以用 appends 串起来，比如：
 
 ```csharp
 public int CompareTo(Student student) => 
-    new OrderingM_pre().Appends(new[] {
-        name.CompareTo(student.name),
-        sex.CompareTo(student.sex),
-        birthday.CompareTo(student.birthday),
-        from.CompareTo(student.from)
-    });
-```
-
-这样的写法比一连串 `if-else` 或者 `?:` 优雅太多。
-
-## C# 中 Monoid 的另一种实现：
-
-个人感觉对于 Monoid 的定义和用法上有点复杂和麻烦，这里提供另一种实现：
-
-### Monoid
-
-```csharp
-public static Func<IEnumerable<T>, T> Monoid<T>(Func<T> Empty, Func<T, T, T> Append) => 
-    list => list.Aggregate(Empty(), Append);
-```
-
-### Optional
-
-```csharp
-public static T? OptionalM<T>(params T?[] list) where T : struct =>
-    Monoid<T?>(() => null, (a, b) => a ?? b)(list);
-```
-
-```csharp
-OptionalM(null, 2, 3) // 2
-```
-
-### OrderingM
-
-```csharp
-public static int OrderingM(params int[] list) =>
-    Monoid(() => 0, (a, b) => a == 0 ? b : a)(list);
-```
-
-```csharp
-public int CompareTo(Student_pre student) =>
-    OrderingM(
+    OrderingM().Appends(
         name.CompareTo(student.name),
         sex.CompareTo(student.sex),
         birthday.CompareTo(student.birthday),
         from.CompareTo(student.from)
     );
 ```
+
+这样的写法比一连串 `if-else` 或者 `?:` 优雅太多。
 
 ## 扩展
 

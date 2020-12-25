@@ -12,7 +12,7 @@
 
 ```csharp
 // 二元运算
-public interface BinaryOperation<T> { public Func<T, T, T> BinaryOperation { get; set; } }
+public interface BinaryOperation<T> { public T BinaryOperation(T a, T b); }
 // 半群
 public interface Semigroup<T> : BinaryOperation<T> { }
 ```
@@ -25,17 +25,9 @@ public interface Semigroup<T> : BinaryOperation<T> { }
 
 ```csharp
 // 单位元
-public interface Unital<T> { public Func<T> Identity { set; get; } }
+public interface Unital<T> { public T Identity(); }
 // 单位半群
-public class Monoid<T> : Unital<T>, Semigroup<T> {
-    public Monoid(Func<T> Identity, Func<T, T, T> BinaryOperation)
-    {
-        this.Identity = Identity;
-        this.BinaryOperation = BinaryOperation;
-    }
-    public Func<T> Identity { get; set; }
-    public Func<T, T, T> BinaryOperation { get; set; }
-}
+public interface Monoid<T> : Unital<T>, Semigroup<T> { }
 ```
 
 对于 `Monoid` 这种代数结构，可以折叠 `fold` / `reduce`：
@@ -56,14 +48,17 @@ public static T Appends<T>(this Monoid<T> monoid, params T[] x) =>
 在 C# 中可以用 `T?` 或者 `Nullable<T>` 可以用来表示可能有值的类型，我们可以对它定义个 `Monoid` ：
 
 ```csharp
-public static Monoid<T?> OptionalM<T>() where T : struct => 
-    new Monoid<T?>(() => null, (a, b) => a ?? b);
+public class OptionalM<T> : Monoid<T?> where T : struct
+{
+    public T? Identity() => null;
+    public T? BinaryOperation(T? a, T? b) => a ?? b;
+}
 ```
 
 这样 `appends` 将获得一串 `T?` 中第一个不为空的值，对于需要进行一连串尝试操作可以这样写：
 
 ```csharp
-OptionalM<int>().Appends(null, 2, 3) // 2
+new OptionalM<int>().Appends(null, 2, 3) // 2
 ```
 
 ## 应用：Ordering
@@ -90,14 +85,17 @@ public int CompareTo(Student s) =>
     from.CompareTo(s.from) != 0 ? from.CompareTo(s.from) : 0;
 ```
 
-对于 `IComparable` ，可以构造出一個 Monoid：
+对于 `IComparable` ，可以构造出一個 `Monoid`：
 
 ```csharp
-public static Monoid<int> OrderingM() =>
-    new Monoid<int>(() => 0, (a, b) => a == 0 ? b : a);
+public class OrderingM : Monoid<int>
+{
+    public int Identity() => 0;
+    public int BinaryOperation(int a, int b) => a == 0 ? b : a;
+}
 ```
 
-同样如果有一串带有优先级的比较操作就可以用 appends 串起来，比如：
+同样如果有一串带有优先级的比较操作就可以用 `appends` 串起来，比如：
 
 ```csharp
 public int CompareTo(Student student) => 
@@ -125,16 +123,18 @@ public static T Cond<T>(this Monoid<T> monoid, bool c, T then, T els) =>
 存在一個 `Todo` 类，
 
 ```csharp
-public static Monoid<Action> Todo() =>
-    new Monoid<Action>(
-        () => () => { },
-        (a, b) => () => { a(); b(); });
+public class Todo : Monoid<Action>
+{
+    public Action Identity() => () => { };
+    public Action BinaryOperation(Action a, Action b) =>
+        () => { a(); b(); };
+}
 ```
 
 然后就可以像下面这样使用上面的定义:
 
 ```csharp
-Monoid<Action> todo = Todo();
+Monoid<Action> todo = new Todo();
 todo.Appends(
     () =>　Console.WriteLine("logic1"),
     todo.When(true, () => Console.WriteLine("logic2 When true")),

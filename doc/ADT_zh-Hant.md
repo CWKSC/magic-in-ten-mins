@@ -106,9 +106,9 @@ Nat number = new S(new S(new S(new Z())));
 CountNat(number) // 3
 ```
 
-### Linked List 鍊錶
+### Linked List 鏈表 / 連結串列
 
-再比如鍊表：
+再比如鏈表：
 
 ```csharp
 public interface List<T> { }

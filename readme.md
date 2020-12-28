@@ -24,9 +24,7 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 [偏易 | 单位半群(Monoid)[C# (IEnumerable, Aggregate(), Extension Methods, IComparable)]](doc/Monoid.md)
 
-> 较难 | 高阶类型(Higher Kinded Type)[Java基础] |
-> [Markdown](doc/HKT.md) |
-> [HTML](https://goldimax.github.io/magic-in-ten-mins/html/HKT.html)
+[较难 | 高阶类型(Higher Kinded Type)[C#基础]](doc/HKT.md)
 
 > 中等 | 单子(Monad)[Java基础，HKT] |
 > [Markdown](doc/Monad.md) |

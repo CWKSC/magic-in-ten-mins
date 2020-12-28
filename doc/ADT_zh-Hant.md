@@ -10,7 +10,7 @@
 
 
 ```csharp
-public sealed class Student
+public class Student
 {
     string name;
     int id;
@@ -25,12 +25,12 @@ public sealed class Student
 
 ```csharp
 public interface ISchoolPerson { }
-public sealed class Student : ISchoolPerson
+public class Student : ISchoolPerson
 {
     string name;
     int id;
 }
-public sealed class Teacher : ISchoolPerson
+public class Teacher : ISchoolPerson
 {
     string name;
     string office;
@@ -62,8 +62,8 @@ ISchoolPerson teacher = new Teacher();
 
 ```csharp
 public interface Bool { }
-public sealed class True : Bool { }
-public sealed class False : Bool { }
+public class True : Bool { }
+public class False : Bool { }
 ```
 
 然後用 `t is True` 就可以用來判定 `t` 作為 `Bool` 的值是不是 `True`
@@ -80,8 +80,8 @@ public enum Bool { True, False }
 
 ```csharp
 public interface Nat { }
-public sealed class Z : Nat { }
-public sealed class S : Nat
+public class Z : Nat { }
+public class S : Nat
 {
     public Nat value;
     public S(Nat v) { value = v; }
@@ -112,8 +112,8 @@ CountNat(number) // 3
 
 ```csharp
 public interface List<T> { }
-public sealed class Nil<T> : List<T> { }
-public sealed class Cons<T> : List<T> {
+public class Nil<T> : List<T> { }
+public class Cons<T> : List<T> {
     public T value;
     public List<T> next;
     public Cons(T v, List<T> n) {
@@ -155,9 +155,9 @@ ADT 最適合構造樹狀的結構，比如解析 JSON 出的結果需要一個�
 
 ```csharp
 public interface JsonValue { }
-public sealed class JsonBool : JsonValue { bool value; }
-public sealed class JsonInt : JsonValue { int value; }
-public sealed class JsonString : JsonValue { string value; }
-public sealed class JsonArray : JsonValue { List<JsonValue> value; }
-public sealed class JsonMap : JsonValue { Dictionary<string, JsonValue> value; }
+public class JsonBool : JsonValue { bool value; }
+public class JsonInt : JsonValue { int value; }
+public class JsonString : JsonValue { string value; }
+public class JsonArray : JsonValue { List<JsonValue> value; }
+public class JsonMap : JsonValue { Dictionary<string, JsonValue> value; }
 ```

@@ -90,11 +90,11 @@ public class ListF : Functor<ListHKT>
 ## 测试代码：
 
 ```csharp
-List<int> list = new List<int>(){ 1, 2, 3, 4 };
-ListHKT<int> listHKT = new ListHKT<int>(list);
-ListF listFunctor = new ListF();
+List<int>       list          = new List<int>(){ 1, 2, 3, 4 };
+ListHKT<int>    listHKT       = new ListHKT<int>(list);
+ListF           listFunctor   = new ListF();
 ListHKT<double> mappedListHKT = (ListHKT<double>)listFunctor.Map(x => x + 1.5, listHKT);
-List<double> mappedList = mappedListHKT.value;
+List<double>    mappedList    = mappedListHKT.value;
 foreach (var ele in mappedList)
     Console.Write(ele + " ");
 // 2.5 3.5 4.5 5.5

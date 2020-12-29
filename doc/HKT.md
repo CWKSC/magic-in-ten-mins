@@ -81,16 +81,9 @@ public class ListHKT<T> : HKT<ListHKT, T>, ListHKT
 ```csharp
 public class ListF : Functor<ListHKT>
 {
-    public HKT<ListHKT, B> Map<A, B>(Func<A, B> f, HKT<ListHKT, A> a)
-    {
-        List<A> aList = ListHKT<A>.Narrow(a).value;
-        B[] result = new B[aList.Count];
-        for (int i = 0; i < aList.Count; i++)
-        {
-            result[i] = f(aList[i]);
-        }
-        return new ListHKT<B>(new List<B>(result));
-    }
+    public HKT<ListHKT, B> Map<A, B>(Func<A, B> f, HKT<ListHKT, A> a) => 
+        new ListHKT<B>(new List<B>(
+            ListHKT<A>.Narrow(a).value.Select(f)));
 }
 ```
 

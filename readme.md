@@ -1,6 +1,6 @@
 # 十分钟魔法练习
 
-Language: [zh-Hant](readme_zh-Hant.md)
+Language: [zh-Hant 繁體中文](readme_zh-Hant.md)
 
 改写自 [十分钟魔法练习-玩火](https://github.com/goldimax/magic-in-ten-mins) ，C# 版本
 
@@ -26,9 +26,7 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 [较难 | 高阶类型(Higher Kinded Type)[C#基础]](doc/HKT.md)
 
-> 中等 | 单子(Monad)[Java基础，HKT] |
-> [Markdown](doc/Monad.md) |
-> [HTML](https://goldimax.github.io/magic-in-ten-mins/html/Monad.html)
+[中等 | 单子(Monad)[C# 基础，HKT]](doc/Monad.md)
 
 > 较难 | 状态单子(State Monad)[Java基础，HKT，Monad] |
 > [Markdown](doc/StateMonad.md) |

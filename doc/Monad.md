@@ -84,7 +84,12 @@ public static Maybe<int?> AddI(Maybe<int?> ma, Maybe<int?> mb)
 `Maybe` 的实现：
 
 ```csharp
-public interface Maybe<T> {}
+public interface Maybe { }
+public interface Maybe<T> : HKT<Maybe, T>, Maybe
+{
+    public static Maybe<T> Narrow(HKT<Maybe, T> v) => (Maybe<T>)v;
+}
+
 public class Nothing<T> : Maybe<T> { }
 public class Just<T> : Maybe<T>
 {
@@ -94,30 +99,16 @@ public class Just<T> : Maybe<T>
 }
 ```
 
-`MaybeHKT` 的实现：
-
-```csharp
-public interface MaybeHKT { }
-public class MaybeHKT<T> : HKT<MaybeHKT, T>, MaybeHKT
-{
-    public Maybe<T> maybe;
-    public MaybeHKT() => maybe = new Nothing<T>();
-    public MaybeHKT(T value) => maybe = new Just<T>(value);
-    public MaybeHKT(Maybe<T> maybe) => this.maybe = maybe;
-    public static MaybeHKT<T> Narrow(HKT<MaybeHKT, T> v) => (MaybeHKT<T>)v;
-}
-```
-
 可以像这样定义 `Maybe Monad` ：
 
 ```csharp
-public class MaybeM : Monad<MaybeHKT>
+public class MaybeM : Monad<Maybe>
 {
-    public HKT<MaybeHKT, V> Pure<V>(V value) => new MaybeHKT<V>(value);
-    public HKT<MaybeHKT, B> FlatMap<A, B>(HKT<MaybeHKT, A> a, Func<A, HKT<MaybeHKT, B>> f)
+    public HKT<Maybe, V> Pure<V>(V value) => new Just<V>(value);
+    public HKT<Maybe, B> FlatMap<A, B>(HKT<Maybe, A> a, Func<A, HKT<Maybe, B>> f)
     {
-        A value = ((Just<A>)MaybeHKT<A>.Narrow(a).maybe).value;
-        return value == null ? new MaybeHKT<B>() : f(value);
+        A value = ((Just<A>)Maybe<A>.Narrow(a)).value;
+        return value == null ? new Nothing<B>() : f(value);
     }
 }
 ```
@@ -128,11 +119,11 @@ public class MaybeM : Monad<MaybeHKT>
 public static Maybe<int?> AddI(Maybe<int?> ma, Maybe<int?> mb)
 {
     MaybeM m = new MaybeM();
-    return MaybeHKT<int?>.Narrow(
-        m.FlatMap(new MaybeHKT<int?>(ma), a =>
-        m.FlatMap(new MaybeHKT<int?>(mb), b =>
+    return Maybe<int?>.Narrow(
+        m.FlatMap(ma, a =>
+        m.FlatMap(mb, b =>
         m.Pure(a + b)))
-    ).maybe;
+    );
 }
 ```
 
@@ -141,16 +132,16 @@ public static Maybe<int?> AddI(Maybe<int?> ma, Maybe<int?> mb)
 > 我知道会有人说，啊，我有更简单的写法：
 >
 > ```java
-> public static Maybe<int?> addE(Maybe<int?> ma, Maybe<int?> mb)
+> public static Maybe<int?> AddE(Maybe<int?> ma, Maybe<int?> mb)
 > {
->     try
->     {
->         return new Just<int?>(((Just<int?>)ma).value + ((Just<int?>)mb).value);
->     }
->     catch (Exception)
->     {
->         return new Nothing<int?>();
->     }
+>        try
+>        {
+>            return new Just<int?>(((Just<int?>)ma).value + ((Just<int?>)mb).value);
+>        }
+>        catch (Exception)
+>        {
+>            return new Nothing<int?>();
+>        }
 > }
 > ```
 >

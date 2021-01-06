@@ -6,9 +6,11 @@
 
 ## λ 立方
 
-表达式非类型部分叫做项（Term），类型部分叫做类型（Type），其中项的类型为类型也写作 `*` 而类型的类型也就是种类（Kind）写作 `□`。简单类型 λ 演算中项和类型是分离的，其中只有针对项的函数，它接收一个项返回另一个项，其类型是 `* → *` 。系统 F 对类型系统进行了扩充，在项中增加了一种函数，接收一个类型返回一个项，其类型是 `□ → *` 。而系统 F ω 进一步增加了接收类型返回类型的函数，也就是 `□ → □` 。那么可以想象应该还存在一类函数接收一个值产生一个类型，其类型应该是 `* → □` 。
+表达式非类型部分叫做项（Term），类型部分叫做类型（Type），其中类型的类型为种类（Kind）也写作 `*` 而种类的类型写作 `□`。表达式中的函数结构为 `λ x: A. (M: B)` ，如果记 `A` 的类型为 `S1` ， `B` 的类型为 `S2` ，那么可以得到一个对子 `(S1, S2)` 。
 
-对于所有 λ 演算都存在 `* → *` 的函数，而另外三种不同函数是三种额外的特性，可以自由组合来构造新的类型系统，一共能组合出六种不同的类型系统：
+简单类型 λ 演算中项和类型是分离的，其中只有针对项的函数，它接收一个项返回另一个项，其得到的对子是 `(*, *)` 。系统 F 对类型系统进行了扩充，在项中增加了一种函数，接收一个类型返回一个项，其得到的对子是 `(□, *)` 。而系统 F ω 进一步增加了接收类型返回类型的函数，也就是 `(□, □)` 。那么可以想象应该还存在一类函数接收一个值产生一个类型，其得到的对子应该是 `(*, □)` 。
+
+对于所有 λ 演算都存在 `(*, *)` 的函数，而另外三种不同函数是三种额外的特性，可以自由组合来构造新的类型系统，一共能组合出六种不同的类型系统：
 
 ```
     ω ------ C
@@ -19,7 +21,7 @@
 → ------ P
 ```
 
-左下角的 λ→ 就是简单类型 λ 演算，和它相连的三条边对应在其基础上分别添加了三种不同函数的 λ 演算。 λ2 就是系统 F ，包含 `□ → *` 函数。 λ<u>ω</u> 就是去除了系统 F 对应特性的系统 F ω ，也叫系统 F <u>ω</u> 。右下的 λP 就是在简单类型 λ 中加入了 `* → □` 的 λ 演算，而这样的类型系统中类型依赖值所以也叫依赖类型系统（Dependent Type System），在 C++ 中模板可以有值参数所以实际上 C++ 的类型系统中包括依赖类型（Dependent Type）。
+左下角的 λ→ 就是简单类型 λ 演算，和它相连的三条边对应在其基础上分别添加了三种不同函数的 λ 演算。 λ2 就是系统 F ，包含 `(□, *)` 函数。 λ<u>ω</u> 就是去除了系统 F 对应特性的系统 F ω ，也叫系统 F <u>ω</u> 。右下的 λP 就是在简单类型 λ 中加入了 `(*, □)` 的 λ 演算，而这样的类型系统中类型依赖值所以也叫依赖类型系统（Dependent Type System），在 C++ 中模板可以有值参数所以实际上 C++ 的类型系统中包括依赖类型（Dependent Type）。
 
 这个立方体就被称为 λ 立方（Lambda Cube）。
 
@@ -30,27 +32,30 @@
 ```java
 interface Expr {
     Expr genUUID();
-    void applyUUID(Val v);
+    Expr applyUUID(Val v);
 
     Expr reduce();
     Expr fullReduce();
     Expr apply(Val v, Expr e);
 
-    Expr checkType() throws BadTypeException;
-    boolean checkApply(Val v);
+    Expr checkType(Env env) throws BadTypeException;
 }
+
 class Sort implements Expr {
     int x; // 1 为 * ， 2 为 □
 }
+
 class Val implements Expr {
     String x;
     UUID id;
     Expr t; // 类型
 }
+
 class Fun implements Expr {
     Val x;
     Expr e;
 }
+
 class App implements Expr {
     Expr f, x;
 }
@@ -65,68 +70,52 @@ class Pi implements Expr {
 
 ```java
 class Sort implements Expr {
-    public Expr checkType() {
+    public Expr checkType(Env env) {
         return new Sort(x + 1);
-    }
-    public boolean checkApply(Val v) {
-        return true;
     }
 }
 
 class Val implements Expr {
-    public Expr checkType() {
-        return t.fullReduce();
-    }
-    public boolean checkApply(Val v) {
-        if (equals(v))
-            return checkType().equals(v.checkType());
-        return t.checkApply(v);
+    public Expr checkType(Env env) throws BadTypeException {
+        if (t == null) return env.lookup(id);
+        return t;
     }
 }
 
 class Fun implements Expr {
-    public Expr checkType() throws BadTypeException {
-        Expr pi = new Pi(x, e.checkType());
-        if (pi.checkType() instanceof Sort)
+    public Expr checkType(Env env) throws BadTypeException {
+        Expr pi = new Pi(x, e.checkType(new ConsEnv(x, env)));
+        if (pi.checkType(env) instanceof Sort)
             return pi;
         throw new BadTypeException();
-    }
-    public boolean checkApply(Val v) {
-        return x.checkApply(v) &&
-                e.checkApply(v);
     }
 }
 
 class App implements Expr {
-    public Expr checkType() throws BadTypeException {
-        Expr tf = f.checkType();
+    public Expr checkType(Env env) throws BadTypeException {
+        Expr tf = f.checkType(env);
         if (tf instanceof Pi) {
             Pi pi = (Pi) tf;
-            if (x.checkType().equals(pi.x.checkType()))
+            if (x.checkType(env).fullReduce().equals(
+                	pi.x.checkType(env).fullReduce()))
                 return pi.e.apply(pi.x, x);
         }
         throw new BadTypeException();
     }
-    public boolean checkApply(Val v) {
-        return f.checkApply(v) && x.checkApply(v);
-    }
 }
 
 class Pi implements Expr {
-    public Expr checkType() throws BadTypeException {
-        Expr ta = x.checkType().checkType(); // x.t 的类型
-        Expr tb = e.checkType();
+    public Expr checkType(Env env) throws BadTypeException {
+        Expr ta = x.t.checkType(env); // x.t 的类型
+        Expr tb = e.checkType(new ConsEnv(x, env));
         if (ta instanceof Sort && tb instanceof Sort) {
             return tb;
         }
         throw new BadTypeException();
     }
-    public boolean checkApply(Val v) {
-        return x.checkApply(v) && e.checkApply(v);
-    }
 }
 ```
 
-所以实际上 `Pi` 就是一个类型检查期的标识，并不参与最终值的演算。
+所以实际上 `Pi` 就是一个类型检查期的标识，并不参与最终值的演算。因为不区分值和类型，其中 `Env` 保存的内容改为 `Val` ，并且 `lookup` 改为用 `UUID` 检索。
 
 这样就构造出了一个相当强大的类型系统，它的表现力已经超越了几乎所有常见语言的类型系统。之后将会介绍如何利用这个强大的类型系统表达复杂的类型，做一些常见类型系统做不到的事情。

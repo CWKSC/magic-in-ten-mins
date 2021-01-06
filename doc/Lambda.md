@@ -22,7 +22,7 @@
 
 一个λ表达式有三种组成可能：变量 `x` 、函数定义 `(λ x. E)` 、函数应用 `(F X)` 。其中 `x` 是一个抽象的符号， `E, F, X` 是 λ 表达式。注意这是递归的定义，我们可以通过组合三种形式来构造复杂的 λ 表达式。比如 `((λ x. (x x)) y)` 整体是一个函数应用，其 `F` 是函数定义 `(λ x. (x x))` ， `X` 是 `y` ，而 `(λ x. (x x))` 函数定义的 `x` 是变量 `x` ， `E` 是 `(x x)` 。
 
-λ表达式的计算也称为归约 (reduce) ，只需要将函数应用整体变换，变换结果为其作为函数定义的第一项 `F` (也就是 `(λ x. E)` ) 中 `E` 里出现的所有**自由**的 `x` 替换为其第二项 `X` ，也就是说 `((λ x. E) X)` 会被归约为 `E(x → X)` ，。听上去挺复杂，举个最简单的例子 `((λ x. (x x) y)` 可以归约为 `(y y)` 。我这里提到了自由的 `x` ，意思是说它不是任何λ函数定义的自变量，比如 `(λ x. (x t))` 中的 `x` 就是不自由的， `t` 就是自由的。
+λ表达式的计算也称为归约 (reduce) ，只需要将函数应用整体变换，变换结果为其作为函数定义的第一项 `F` (也就是 `(λ x. E)` ) 中 `E` 里出现的所有**自由**的 `x` 替换为其第二项 `X` ，也就是说 `((λ x. E) X)` 会被归约为 `E(x → X)` ，。听上去挺复杂，举个最简单的例子 `((λ x. (x x)) y)` 可以归约为 `(y y)` 。我这里提到了自由的 `x` ，意思是说它不是任何λ函数定义的自变量，比如 `(λ x. (x t))` 中的 `x` 就是不自由的， `t` 就是自由的。
 
 函数定义有比函数应用更低的优先级，也就是说是 `(λ x. (x x))` 可以写成 `(λ x. x x)` 。函数应用是左结合的，所以 `((x x) x)` 可以写成 `(x x x)` 。
 
@@ -38,6 +38,10 @@ class Val implements Expr {
     UUID id;
     Val(String s) {
         x = s;
+    }
+    Val(String s, UUID id) {
+        x = s;
+        this.id = id;
     }
     public String toString() {
         return x;
@@ -112,7 +116,7 @@ interface Expr {
     Expr reduce();
     Expr apply(Val v, Expr ex);
     Expr genUUID();
-    void applyUUID(Val v);
+    Expr applyUUID(Val v);
 }
 
 class Val implements Expr {
@@ -124,8 +128,9 @@ class Val implements Expr {
     public Expr genUUID() {
         return this;
     }
-    public void applyUUID(Val a) {
-        if (x.equals(a.x)) id = a.id;
+    public Expr applyUUID(Val a) {
+        if (x.equals(a.x)) return new Val(x, a.id);
+        return this;
     }
 }
 
@@ -137,15 +142,14 @@ class Fun implements Expr {
     }
     public Expr genUUID() {
         if (x.id == null) {
-            x.id = UUID.randomUUID();
-            e.applyUUID(x);
+            Val v = new Val(x.x, UUID.randomUUID());
+            return new Fun(v, e.applyUUID(v).genUUID());
         }
-        e.genUUID();
-        return this;
+        return new Fun(x, e.genUUID());
     }
-    public void applyUUID(Val v) {
-        if (!x.x.equals(v.x))
-            e.applyUUID(v);
+    public Expr applyUUID(Val v) {
+        if (x.x.equals(v.x)) return this;
+        return new Fun(x, e.applyUUID(v));
     }
 }
 
@@ -154,8 +158,7 @@ class App implements Expr {
         Expr fr = f.reduce();
         if (fr instanceof Fun) {
             Fun fun = (Fun) fr;
-            return fun.e.apply(
-                fun.x, x).reduce();
+            return fun.e.apply(fun.x, x).reduce();
         }
         return new App(fr, x);
     }
@@ -164,13 +167,10 @@ class App implements Expr {
                        x.apply(v, ex));
     }
     public Expr genUUID() {
-        f.genUUID();
-        x.genUUID();
-        return this;
+        return new Fun(f.genUUID(), x.genUUID());
     }
-    public void applyUUID(Val v) {
-        f.applyUUID(v);
-        x.applyUUID(v);
+    public Expr applyUUID(Val v) {
+        return new Fun(f.applyUUID(v), x.applyUUID(v));
     }
 }
 

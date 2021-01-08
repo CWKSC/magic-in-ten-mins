@@ -58,7 +58,7 @@ ListHKT<int> listHKT = new ListHKT<int>(list);
 
 ListHKT<double> flatMappedListHKT = 
     (ListHKT<double>)listM.FlatMap(listHKT, v => 
-                                   listM.Pure(v + 0.5, v + 1.5));
+        listM.Pure(v + 0.5, v + 1.5));
 
 List<double> flatMappedList = flatMappedListHKT.value;
 foreach (var ele in flatMappedList)
@@ -131,7 +131,7 @@ public static Maybe<int?> AddI(Maybe<int?> ma, Maybe<int?> mb)
 
 > 我知道会有人说，啊，我有更简单的写法：
 >
-> ```java
+> ```csharp
 > public static Maybe<int?> AddE(Maybe<int?> ma, Maybe<int?> mb)
 > {
 >        try

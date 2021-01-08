@@ -24,7 +24,7 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 [偏易 | 单位半群(Monoid)[C# (IEnumerable, Aggregate(), Extension Methods, IComparable)]](doc/Monoid.md)
 
-[较难 | 高阶类型(Higher Kinded Type)[C#基础]](doc/HKT.md)
+[较难 | 高阶类型(Higher Kinded Type)[C# (interface, List)]](doc/HKT.md)
 
 [中等 | 单子(Monad)[C# 基础，HKT]](doc/Monad.md)
 

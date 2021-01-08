@@ -119,10 +119,10 @@ public class MaybeM : Monad<Maybe>
 public static Maybe<int?> AddI(Maybe<int?> ma, Maybe<int?> mb)
 {
     MaybeM m = new MaybeM();
-    return Maybe<int?>.Narrow(
-        m.FlatMap(ma, a =>
-        m.FlatMap(mb, b =>
-        m.Pure(a + b)))
+    return Maybe<int?>.Narrow( // do
+        m.FlatMap(ma, a =>     //    a <- ma
+        m.FlatMap(mb, b =>     //    b <- mb
+        m.Pure(a + b)))        //    pure (a + b)
     );
 }
 ```

@@ -2,15 +2,15 @@
 
 ### By 「玩火」
 
-> 前置技能：Java 基础，ADT
+> 前置技能：C# (Guid)，ADT
 
 ## Intro
 
-程序员们总是为哪种语言更好而争论不休，而强悍的大佬也为自己造出语言而感到高兴。造语言也被称为程序员的三大浪漫之一。这样一项看上去高难度的活动总是让萌新望而生畏，接下来我要介绍一种世界上最简单的**图灵完备**语言并给出 100 行Java代码的解释器实现。让萌新也能体验造语言的乐趣。
+程序员们总是为哪种语言更好而争论不休，而强悍的大佬也为自己造出语言而感到高兴。造语言也被称为程序员的三大浪漫之一。这样一项看上去高难度的活动总是让萌新望而生畏，接下来我要介绍一种世界上最简单的**图灵完备**语言并给出 100 行 C# 代码的解释器实现。让萌新也能体验造语言的乐趣。
 
 ## λ演算
 
-1936年，丘奇(Alonzo Church)提出了一种非常简单的计算模型，叫λ演算(Lambda Calculus)。
+1936 年，丘奇(Alonzo Church)提出了一种非常简单的计算模型，叫 λ 演算(Lambda Calculus)。
 
 > 一些不严谨的通俗理解：
 >
@@ -30,58 +30,57 @@
 
 首先，我们要用 ADT 定义出 λ 表达式的数据结构：
 
-```java
-interface Expr {};
-// Value 变量
-class Val implements Expr {
-    String x;
-    UUID id;
-    Val(String s) {
-        x = s;
-    }
-    Val(String s, UUID id) {
-        x = s;
+```csharp
+public interface Expr { };
+
+// Value 变量 //
+public class Val : Expr
+{
+    public string value;
+    public string id;
+    public Val(string value) => this.value = value;
+    public Val(string value, string id)
+    {
+        this.value = value;
         this.id = id;
     }
-    public String toString() {
-        return x;
-    }
-    public boolean equals(Object obj) {
-        if (obj instanceof Val)
-            return id.equals(((Val) obj).id);
-        return false;
-    }
+    public override string ToString() => value;
+    public override bool Equals(object obj) => 
+        obj is Val val && id.Equals(val.id);
+    public override int GetHashCode() => HashCode.Combine(value, id);
 }
-// Function 函数定义
-class Fun implements Expr {
-    Val x;
-    Expr e;
-    Fun(String s, Expr a) {
-        x = new Val(s);
-        e = a;
+
+// Function 函数定义 //
+public class Fun : Expr
+{
+    public Val value;
+    public Expr expr;
+    public Fun(string value, Expr expr) {
+        this.value = new Val(value);
+        this.expr = expr;
     }
-    Fun(Val s, Expr a) {
-        x = s;
-        e = a;
+    public Fun(Val value, Expr expr) {
+        this.value = value;
+        this.expr = expr;
     }
-    public String toString() {
-        return "(λ " + x + ". " + e + ")";
-    }
+    public override string ToString() => 
+        "(λ " + value + ". " + expr + ")";
 }
-// Apply 函数应用
-class App implements Expr {
-    Expr f, x;
-    App(Expr e1, Expr e2) {
-        f = e1;
-        x = e2;
+
+// Apply 函数应用 //
+public class App : Expr
+{
+    public Expr f, x;
+    public App(Expr f, Expr x) {
+        this.f = f;
+        this.x = x;
     }
-    public String toString() {
-        return "(" + f + " " + x + ")";
-    }
+    public override string ToString() => 
+        "(" + f + " " + x + ")";
 }
 ```
 
-> 注意到上面代码中 `Val` 有一个类型为 `UUID` 的字段，同时 `equals` 函数只比较 `id` 字段，这个字段是用来区分相同名字的不同变量的。如果不做区分那么对于下面的 λ 表达式：
+> 注意到上面代码中 `Val` 有一个类型为 `string` 的字段，同时 `Equals` 函数只比较 `id` 字段，这个字段是用来区分相同名字的不同变量的。如果不做区分那么对于下面的 λ 表达式：
 >
 > ```
 > λ z. (λ x. (λ z. x)) z
@@ -101,7 +100,7 @@ class App implements Expr {
 
 然后就可以构造 λ 表达式了，比如 `(λ x. x (λ x. x)) y` 就可以这样构造：
 
-```java
+```csharp
 Expr expr = new App(
     new Fun("x", 
         new App(new Val("x"), 
@@ -109,74 +108,84 @@ Expr expr = new App(
     new Val("y"));
 ```
 
-然后就可以定义归约函数 `reduce` 和应用自由变量函数 `apply` 还有用来生成 `UUID` 的 `genUUID` 函数和 `applyUUID` 函数：
+然后就可以定义归约函数 `Reduce` 和应用自由变量函数 `Apply` 还有用来生成 `UUID` 的 `GenUUID` 函数和 `ApplyUUID` 函数：
 
-```java
-interface Expr {
-    Expr reduce();
-    Expr apply(Val v, Expr ex);
-    Expr genUUID();
-    Expr applyUUID(Val v);
+```csharp
+public interface Expr {
+    Expr Reduce();
+    Expr Apply(Val value, Expr expr);
+    Expr GenUUID();
+    Expr ApplyUUID(Val a);
 }
 
-class Val implements Expr {
-    public Expr reduce() { return this; }
-    public Expr apply(Val v, Expr ex) {
-        if (equals(v)) return ex;
-        return this;
-    }
-    public Expr genUUID() {
-        return this;
-    }
-    public Expr applyUUID(Val a) {
-        if (x.equals(a.x)) return new Val(x, a.id);
-        return this;
-    }
+public class Val : Expr
+    public Expr Reduce() => this;
+
+    public Expr Apply(Val value, Expr expr) => 
+        Equals(value) ? expr : this;
+
+    public Expr GenUUID() => this;
+
+    public Expr ApplyUUID(Val a) => 
+        value.Equals(a.value) ? new Val(value, a.id) : this;
 }
 
-class Fun implements Expr {
-    public Expr reduce() { return this; }
-    public Expr apply(Val v, Expr ex) {
-        if (v.equals(x)) return this;
-        return new Fun(x, e.apply(v, ex));
-    }
-    public Expr genUUID() {
-        if (x.id == null) {
-            Val v = new Val(x.x, UUID.randomUUID());
-            return new Fun(v, e.applyUUID(v).genUUID());
+public class Fun : Expr
+    public Expr Reduce() => this;
+
+    public Expr Apply(Val variable, Expr expr) => 
+        variable.Equals(this.variable) ? this : 
+    new Fun(this.variable, this.expr.Apply(this.variable, expr));
+
+    public Expr GenUUID()
+    {
+        if (variable.id == null)
+        {
+            Val v = new Val(variable.value, Guid.NewGuid().ToString());
+            return new Fun(v, expr.ApplyUUID(v).GenUUID());
         }
-        return new Fun(x, e.genUUID());
+        return new Fun(variable, expr.GenUUID());
     }
-    public Expr applyUUID(Val v) {
-        if (x.x.equals(v.x)) return this;
-        return new Fun(x, e.applyUUID(v));
-    }
+
+    public Expr ApplyUUID(Val a) => 
+        variable.value.Equals(a.value) ? this : 
+    new Fun(variable, expr.ApplyUUID(a));
 }
 
-class App implements Expr {
-    public Expr reduce() {
-        Expr fr = f.reduce();
-        if (fr instanceof Fun) {
-            Fun fun = (Fun) fr;
-            return fun.e.apply(fun.x, x).reduce();
-        }
-        return new App(fr, x);
+public class App : Expr
+{
+    public Expr Reduce()
+    {
+        Expr fr = f.Reduce();
+        return fr is Fun fun ? 
+            fun.expr.Apply(fun.variable, x).Reduce() : 
+        new App(fr, x);
     }
-    public Expr apply(Val v, Expr ex) {
-        return new App(f.apply(v, ex),
-                       x.apply(v, ex));
-    }
-    public Expr genUUID() {
-        return new Fun(f.genUUID(), x.genUUID());
-    }
-    public Expr applyUUID(Val v) {
-        return new Fun(f.applyUUID(v), x.applyUUID(v));
-    }
-}
 
+    public Expr Apply(Val value, Expr expr) =>
+        new App(f.Apply(value, expr),
+                x.Apply(value, expr));
+
+    public Expr GenUUID() =>
+        new App(f.GenUUID(), x.GenUUID());
+
+    public Expr ApplyUUID(Val a) =>
+        new Fun((Val)f.ApplyUUID(a), x.ApplyUUID(a));
+}
 ```
 
-注意在 `reduce` 一个表达式之前应该先调用 `genUUID` 来生成变量标签否则会抛出空指针异常。
+注意在 `Reduce` 一个表达式之前应该先调用 `GenUUID` 来生成变量标签否则会抛出空指针异常。
 
-以上就是 100 行 Java 写成的解释器啦！
+```csharp
+Expr expr = new App(
+    new Fun("x",
+            new App(new Val("x"),
+                    new Fun("x", new Val("x")))),
+    new Val("y"));
+
+Console.WriteLine(expr); // ((λ x. (x (λ x. x))) y)
+Console.WriteLine(expr.GenUUID().Reduce()); // (λ x. (λ x. x))
+```
+
+以上就是 100 行 C# 写成的解释器啦！
 

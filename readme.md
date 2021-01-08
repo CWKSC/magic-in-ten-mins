@@ -16,11 +16,11 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 ## 类型系统
 
-[偏易 | 代数数据类型(Algebraic Data Type)[C# 基础]](doc/ADT.md)
+[偏易 | 代数数据类型(Algebraic Data Type)[C# (interface, class)]](doc/ADT.md)
 
-[偏易 | 广义代数数据类型(Generalized Algebriac Data Type)[C# 基础，ADT]](doc/GADT.md)
+[偏易 | 广义代数数据类型(Generalized Algebriac Data Type)[C# (interface, class)，ADT]](doc/GADT.md)
 
-[偏易 | 余代数数据类型(Coalgebraic Data Type)[C# 基础，ADT]](doc/CoData.md)
+[偏易 | 余代数数据类型(Coalgebraic Data Type)[C# (Func, delegate)，ADT]](doc/CoData.md)
 
 [偏易 | 单位半群(Monoid)[C# (IEnumerable, Aggregate(), Extension Methods, IComparable)]](doc/Monoid.md)
 
@@ -28,9 +28,7 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 [中等 | 单子(Monad)[C# 基础，HKT]](doc/Monad.md)
 
-> 较难 | 状态单子(State Monad)[Java基础，HKT，Monad] |
-> [Markdown](doc/StateMonad.md) |
-> [HTML](https://goldimax.github.io/magic-in-ten-mins/html/StateMonad.html)
+[较难 | 状态单子(State Monad)[C# (Func, Tuple)，HKT，Monad)]](doc/StateMonad.md)
 
 > 中等 | 简单类型 λ 演算(Simply-Typed Lambda Calculus)[Java 基础，ADT，λ 演算] |
 > [Markdown](doc/STLC.md) |

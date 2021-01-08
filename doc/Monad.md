@@ -34,10 +34,10 @@ public class ListM : Monad<ListHKT>
 
     public HKT<ListHKT, B> FlatMap<A, B>(HKT<ListHKT, A> a, Func<A, HKT<ListHKT, B>> f) => 
         ListHKT<A>.Narrow(a).value.Aggregate(new ListHKT<B>(), (result, ele) =>
-                                             {
-                                                 result.value.AddRange(ListHKT<B>.Narrow(f(ele)).value);
-                                                 return result;
-                                             });
+        {
+            result.value.AddRange(ListHKT<B>.Narrow(f(ele)).value);
+            return result;
+        });
 }
 ```
 

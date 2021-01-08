@@ -2,7 +2,7 @@
 
 ### By 「玩火」，改写「CWKSC」
 
-> 前置技能：C# 基础，[ADT](ADT.md)
+> 前置技能：C# (Func, delegate)，[ADT](ADT.md)
 
 ## ADT 的局限性
 

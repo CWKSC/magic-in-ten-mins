@@ -44,9 +44,7 @@ QQ群：1070975853 | [Telegram Group](https://t.me/joinchat/Gla40h2ZvlSrqImOMaMU
 
 ## 计算理论
 
-> 较难 | λ 演算(Lambda Calculus)[Java基础，ADT] |
-> [Markdown](doc/Lambda.md) |
-> [HTML](https://goldimax.github.io/magic-in-ten-mins/html/Lambda.html)
+[较难 | λ 演算(Lambda Calculus)[C# (Guid)，ADT]](doc/Lambda.md)
 
 > 偏易 | 求值策略(Evaluation Strategy)[Java基础，λ演算] |
 > [Markdown](doc/EvalStrategy.md) |
